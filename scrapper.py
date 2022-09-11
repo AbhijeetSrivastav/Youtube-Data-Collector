@@ -9,7 +9,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 import time
-import re
 
 
 class Scrapper:
@@ -57,12 +56,16 @@ class Scrapper:
 
     def scrapThumbnailLink(self):
         """Generates thumbnail links for each video"""
-        thumbnail_pattern = "^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*"
 
-        for video_url in self.videos_urls:
-            s = re.findall(thumbnail_pattern, video_url)[0][-1]
-            thumbnail_url = f"https://i.ytimg.com/vi/{s}/maxresdefault.jpg"
-            self.thumbnails_urls.append(thumbnail_url)
+        def scrapThumbnailLink():
+            """Generates thumbnail links for each video"""
+            for video_url in self.videos_urls:
+                try:
+                    thumbnail_url = 'https://i.ytimg.com/vi/' + video_url.rsplit('=')[1] + '/maxresdefault.jpg'
+                    self.thumbnails_urls.append(thumbnail_url)
+                except IndexError:
+                    thumbnail_url = 'https://i.ytimg.com/vi/' + video_url.rsplit('shorts/')[1] + '/maxresdefault.jpg'
+                    self.thumbnails_urls.append(thumbnail_url)
 
     def scrapLikes(self):
         """Scraps number of likes for each video"""
@@ -92,7 +95,7 @@ class Scrapper:
         for video_url in self.videos_urls:
             driver.get(video_url)
 
-            for i in range(10):
+            for i in range(13):
                 wait_driver.until(EC.visibility_of_element_located((By.TAG_NAME, "body"))).send_keys(Keys.END)
                 time.sleep(5)
 
@@ -124,12 +127,4 @@ if __name__ == '__main__':
     scp.scrapMainPageData()
     print(scp.videos_urls)
 
-    #     scp.scrapMainPageData() -----working all fields
-    # print(scp.titles, scp.videos_urls, scp.views, end ='')
-    # scp.scrapThumbnailLink()
-    # scp.scrapLikes()
-
-    # scp.scrapCommentData()
-    # print(scp.comments, scp.commentors, scp.commented_on)
-
-    # pd.DataFrame(zip(scp.titles, scp.videos_urls, scp.thumbnails_urls, scp.likes, scp.views))
+    print(scp.videos_urls[0])
