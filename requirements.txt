@@ -1,7 +1,6 @@
 # This file may be used to create an environment using:
 # $ conda create --name <env> --file <this file>
 # platform: win-64
-appdirs=1.4.4=pypi_0
 async-generator=1.10=pypi_0
 attrs=22.1.0=pypi_0
 beautifulsoup4=4.11.1=pypi_0
