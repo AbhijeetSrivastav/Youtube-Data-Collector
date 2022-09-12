@@ -22,13 +22,39 @@
 
 {% block body %}
 <div class="content">
-    <h1 style="text-align: center">Scrap</h1>
+    <h1 style="text-align: center" class="my-5">Youtube Scrapper</h1>
 
-    <div class="form">
-        <form action="/viddata" method="POST">
-            <input type="text" name="content" id="content">
-            <input class="btn btn-secondary" type="submit" value="Scrap">
+    <div class="form my-5">
+        <form action="/viddata" method="POST" class="form-inline">
+            <input class="py-1 my-2" type="text" name="content" id="content">
+            <input class="btn btn-secondary p-1 my-2" type="submit" value="Scrap">
         </form>
     </div>
+</div>
+<div class="content my-5">
+    <ol class="list-unstyled mt-5 list-inline-item">
+        <li class="my-1 py-1 bg-danger">
+            Site takes at least 10 minute of time to fetch the data for 50 videos of a youtube channel.
+        </li>
+        <li class="my-1 py-1 bg-primary">
+            Wait for it to load or you may see video of it working on the github repo of the project
+        </li>
+        <li class="my-1 py-1 bg-primary">
+            I was able to create method to download the video via url directly in system but was not able to do it
+            properly due to time lack of my job
+
+        </li>
+        <li class="my-1 py-1 bg-success">
+            Thankyou sudhir sir i learnt a lot from this project.. will imporve it further
+        </li>
+        <li class="my-1 py-1 bg-warning">
+            Some time it doesn't load few data due to internet issue or element not loaded correctly in selenium
+            driver.
+
+        </li>
+
+
+    </ol>
+
 </div>
 {% endblock %}
