@@ -56,11 +56,6 @@ def index():
                 since += till
                 till += till
 
-            # vid_json = {'title': 'erg', 'video_url': 'https://www.youtube.com//watch?v=2CRY5BYf-js', 'view': 'erg',
-            #             'thumbnail_url': 'https://www.youtube.com//watch?v=2CRY5BYf-js', 'like': 'erg',
-            #             'comment_data': [['erg', 'erg'], ['erg', 'erg'], ['erg', 'erg']]}
-            # videos_data.append(vid_json)
-
             return render_template('results.html', videos_data=videos_data)
         except Exception as e:
             print('The Exception message is: ', e)
