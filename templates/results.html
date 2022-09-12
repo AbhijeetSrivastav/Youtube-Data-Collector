@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Video Data Page</title>
+
+
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
+            crossorigin="anonymous"></script>
+
+
+</head>
+
+<body>
+
+<div>
+    <div class="header">Youtube Channel Data</div>
+    <table class="table">
+
+        <tr>
+            <th>Titles</th>
+            <th>Video Urls</th>
+            <th>Views</th>
+            <th>Thumbnail Urls</th>
+            <th>Likes</th>
+            <th width="230">Comments</th>
+            <th>Commentors</th>
+            <th>Commented On</th>
+            <th>Download</th>
+        </tr>
+
+        {% for video_data in videos_data %}
+        <tr>
+            <td>{{video_data['title']}}</td>
+            <td><a href="{{video_data['video_url']}}"> {{video_data['video_url']}}</a></td>
+            <td>{{video_data['view']}}</td>
+            <td><a href="{{video_data['thumbnail_url']}}"> {{video_data['thumbnail_url']}}</a></td>
+            <td>{{video_data['like']}}</td>
+            <td>{{video_data['comment_data'][0]}}</td>
+            <td>{{video_data['comment_data'][1]}}</td>
+            <td>{{video_data['comment_data'][2]}}</td>
+            <td>
+                <form action="/download" method="POST">
+                    <input type="hidden" name="content" id="content">
+                    <input class="btn btn-primary" type="submit" value="Download">
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+
+</body>
+
+</html>
+
+

@@ -40,21 +40,27 @@ class Scrapper:
         except Exception as e:
             raise Exception(e)
 
-        # Scrapping raw data for title, views and video links
-        title_raw = soup.find_all('a', id='video-title')
-        views__raw = soup.find_all('span', class_='style-scope ytd-grid-video-renderer')
-        video_link_raw = soup.find_all('a', id='video-title')
+        try:
+            # Scrapping raw data for title, views and video links
+            title_raw = soup.find_all('a', id='video-title')
+            views__raw = soup.find_all('span', class_='style-scope ytd-grid-video-renderer')
+            video_link_raw = soup.find_all('a', id='video-title')
+        except Exception:
+            raise Exception
 
-        # Parsing and saving title, vies, video link to respective lists
-        for title in title_raw:
-            self.titles.append(title.text)
+        try:
+            # Parsing and saving title, vies, video link to respective lists
+            for title in title_raw:
+                self.titles.append(title.text)
 
-        for view in views__raw:
-            self.views.append(view.text)
+            for view in views__raw:
+                self.views.append(view.text)
 
-        for video_link in video_link_raw:
-            link = 'https://www.youtube.com/' + video_link.get('href')
-            self.videos_urls.append(link)
+            for video_link in video_link_raw:
+                link = 'https://www.youtube.com/' + video_link.get('href')
+                self.videos_urls.append(link)
+        except Exception:
+            raise Exception
 
     def scrapThumbnailLink(self):
         """Generates thumbnail links for each video"""
@@ -113,7 +119,7 @@ class Scrapper:
         try:
             # seeting up driver
             driver = webdriver.Chrome()
-            wait_driver = WebDriverWait(driver, 10)
+            wait_driver = WebDriverWait(driver, 5)
         except Exception as e:
             raise Exception(e)
 
@@ -124,24 +130,27 @@ class Scrapper:
                 wait_driver.until(EC.visibility_of_element_located((By.TAG_NAME, "body"))).send_keys(Keys.END)
                 time.sleep(5)
 
+            # Fetch comment
             try:
                 for comment in wait_driver.until(
                         EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#content-text"))):
                     self.comments.append(comment.text.replace('\n', ''))
             except Exception:
-                pass
+                self.comments.append('')
 
+            # Fetch commentor
             try:
                 for commentor in wait_driver.until(
                         EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#author-text"))):
                     self.commentors.append(commentor.text.capitalize())
             except Exception:
-                pass
+                self.commentors.append('')
 
+            # Fetch commented on
             try:
                 for posted_on in wait_driver.until(
                         EC.presence_of_all_elements_located((By.CSS_SELECTOR, "#header-author"))):
                     self.commented_on.append(posted_on.text.split('\n', 1)[1])
 
             except Exception:
-                pass
+                self.commented_on.append('')
