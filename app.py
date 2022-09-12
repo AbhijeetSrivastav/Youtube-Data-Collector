@@ -1,8 +1,8 @@
-from flask import Flask, render_template, request, send_file, session
+from flask import Flask, render_template, request
 from flask_cors import cross_origin
 
-from pytube import YouTube
-from io import BytesIO
+# from pytube import YouTube
+# from io import BytesIO
 
 import scrapper
 from dbupdater import MongoUpdater
@@ -59,24 +59,23 @@ def index():
             return render_template('results.html', videos_data=videos_data)
         except Exception as e:
             print('The Exception message is: ', e)
-        return render_template('results.html')
 
     else:
         return render_template('index.html')
 
 
-@app.route("/download", methods=["GET", "POST"])
-def download_video():
-    if request.method == "POST":
-        # buffer = BytesIO()
-        # url = YouTube(session['link'])
-        # itag = request.form.get("itag")
-        # video = url.streams.get_by_itag(itag)
-        # video.stream_to_buffer(buffer)
-        # buffer.seek(0)
-        # return send_file(buffer, as_attachment=True, download_name="Video - YT2Video.mp4", mimetype="video/mp4")
-        pass
+# @app.route("/download", methods=["GET", "POST"])
+# def download_video():
+#     if request.method == "POST":
+#         # buffer = BytesIO()
+#         # url = YouTube(session['link'])
+#         # itag = request.form.get("itag")
+#         # video = url.streams.get_by_itag(itag)
+#         # video.stream_to_buffer(buffer)
+#         # buffer.seek(0)
+#         # return send_file(buffer, as_attachment=True, download_name="Video - YT2Video.mp4", mimetype="video/mp4")
+#         pass
 
 
 if __name__ == "__main__":
-    app.run(host='127.0.0.1', port=8001, debug=True)
+    app.run(host='127.0.0.1', port=8001)
