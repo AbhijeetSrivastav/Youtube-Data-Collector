@@ -9,6 +9,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 import time
+import re
+import json as json
 
 
 class Scrapper:
@@ -56,32 +58,55 @@ class Scrapper:
 
     def scrapThumbnailLink(self):
         """Generates thumbnail links for each video"""
-
-        def scrapThumbnailLink():
-            """Generates thumbnail links for each video"""
-            for video_url in self.videos_urls:
-                try:
-                    thumbnail_url = 'https://i.ytimg.com/vi/' + video_url.rsplit('=')[1] + '/maxresdefault.jpg'
-                    self.thumbnails_urls.append(thumbnail_url)
-                except IndexError:
-                    thumbnail_url = 'https://i.ytimg.com/vi/' + video_url.rsplit('shorts/')[1] + '/maxresdefault.jpg'
-                    self.thumbnails_urls.append(thumbnail_url)
+        for video_url in self.videos_urls:
+            try:
+                thumbnail_url = 'https://i.ytimg.com/vi/' + video_url.rsplit('=')[1] + '/maxresdefault.jpg'
+                self.thumbnails_urls.append(thumbnail_url)
+            except IndexError:
+                thumbnail_url = 'https://i.ytimg.com/vi/' + video_url.rsplit('shorts/')[1] + '/maxresdefault.jpg'
+                self.thumbnails_urls.append(thumbnail_url)
 
     def scrapLikes(self):
         """Scraps number of likes for each video"""
         try:
-            # setting up driver
+            # setting up soup
             driver = webdriver.Chrome()
         except Exception as e:
             raise Exception(e)
 
+        result = {}
+
         for video_url in self.videos_urls:
-            time.sleep(5)
             driver.get(video_url)
-            no_of_likes = driver.find_element(By.XPATH,
-                                              '/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/div[5]/div[1]/div[2]/ytd-video-primary-info-renderer/div/div/div[3]/div/ytd-menu-renderer/div[1]/ytd-toggle-button-renderer[1]/a/yt-formatted-string').text
-            self.likes.append(no_of_likes)
-            time.sleep(5)
+            html = driver.page_source
+            soup = bs(html, 'html.parser')
+
+            data = re.search(r"var ytInitialData = ({.*?});", soup.prettify()).group(1)
+            try:
+                data_json = json.loads(data)
+                videoPrimaryInfoRenderer = \
+                    data_json['contents']['twoColumnWatchNextResults']['results']['results']['contents'][0][
+                        'videoPrimaryInfoRenderer']
+                videoSecondaryInfoRenderer = \
+                    data_json['contents']['twoColumnWatchNextResults']['results']['results']['contents'][1][
+                        'videoSecondaryInfoRenderer']
+
+                # number of likes
+                likes_label = \
+                    videoPrimaryInfoRenderer['videoActions']['menuRenderer']['topLevelButtons'][0][
+                        'toggleButtonRenderer'][
+                        'defaultText']['accessibility']['accessibilityData']['label']  # "No likes" or "###,### likes"
+                likes_str = likes_label.split(' ')[0].replace(',', '')
+
+                if likes_str == 'No':
+                    like = '0'
+                else:
+                    like = likes_str
+
+                self.likes.append(like)
+            except Exception:
+                like = '0'
+                self.likes.append(like)
 
     def scrapCommentData(self):
         """Scraps comments, commentor name, comment post time for each video"""
@@ -120,11 +145,3 @@ class Scrapper:
 
             except Exception:
                 pass
-
-
-if __name__ == '__main__':
-    scp = Scrapper('https://www.youtube.com/user/krishnaik06')
-    scp.scrapMainPageData()
-    print(scp.videos_urls)
-
-    print(scp.videos_urls[0])
